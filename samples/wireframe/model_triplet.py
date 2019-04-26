@@ -18,8 +18,7 @@ class Model:
 
     def build_model(self):
         base = KL.Input(shape=(1024,))
-        x = KL.Dropout(0.1)(base)
-        x = KL.Dense(128)(x)
+        x = KL.Dense(128)(base)
         x = KL.Activation('softmax')(x)
         full_model = keras.Model(inputs=base, outputs=x)
         return full_model
@@ -29,8 +28,7 @@ class Model:
                            metrics=['accuracy'])
 
     def triplet_loss(self, y_true, y_pred):
-        # Resh
-        # ape data
+        # Reshape data
         y_true = tf.reshape(y_true, [-1])
         def_margin = tf.constant(1.0, dtype=tf.float32)
 
