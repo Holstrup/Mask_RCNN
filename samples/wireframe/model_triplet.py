@@ -27,7 +27,8 @@ class Model:
                            metrics=['accuracy'])
 
     def triplet_loss(self, y_true, y_pred):
-        # Reshape data
+        # Resh
+        # ape data
         y_true = tf.reshape(y_true, [-1])
         def_margin = tf.constant(1.0, dtype=tf.float32)
 

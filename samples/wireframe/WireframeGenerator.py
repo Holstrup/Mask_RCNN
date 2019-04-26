@@ -62,6 +62,43 @@ def add_box_json_polygon(filename, size, icons):
     return s
 
 
+def generate_data_2(NUM_IMAGES, ICONS_PER_IMAGE):
+    """
+    Generates wireframes by inserting icons into backgrounds, and writing a "regions data" file
+    that lets Mask R-CNN know where the BBoxes are on the image
+
+    :param NUM_IMAGES: Number of images you want to generate
+    :param ICONS_PER_IMAGE: MAX icons per image
+    """
+    global file_content
+    for type in TYPES:
+        file_content = "{"
+        if type == "/val":
+            NUM_IMAGES = int(NUM_IMAGES / 5)
+        for j in range(NUM_IMAGES):
+            icon_list = []
+            NUM_ICONS = random.randint(1, ICONS_PER_IMAGE)
+            background = Image.open(BACKGROUND_DIR + "/" + BACKGROUNDS[random.randint(0, len(BACKGROUNDS) - 1)]).convert("L")
+            for i in range(NUM_ICONS):
+                cur_icon = ICONS[random.randint(0, len(ICONS) - 1)]
+                exact_file = random.choice(os.listdir('Icons/' + cur_icon + "/"))
+                img = Image.open('Icons/' + cur_icon + "/" + exact_file, 'r').resize((ICON_W, ICON_H))
+                offset = random.randint(1, bg_w - ICON_W), random.randint(1, bg_h - ICON_H)
+                background.paste(img, offset, img)
+                icon_list.append((cur_icon, offset[0], offset[1]))
+            img_dir_name = DATA_DIR + type + '/' + str(j) + ".png"
+            background.save(img_dir_name)
+            filename = str(j) + ".png"
+            img_size = os.stat(img_dir_name).st_size
+            file_content += add_box_json_polygon(filename, img_size, icon_list)
+
+        file_content = file_content[0:-1] + "}"
+        write_string_to_json(file_content, type)
+
+
+generate_data_2(10, 2)
+
+
 def generate_data(NUM_IMAGES, ICONS_PER_IMAGE):
     """
     Generates wireframes by inserting icons into backgrounds, and writing a "regions data" file

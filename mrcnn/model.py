@@ -2610,15 +2610,34 @@ class MaskRCNN():
 
         num_of_classes = overlaps(results[0]['rois'])
         print(num_of_classes)
-        """
-        for object_number in np.unique(num_of_classes):
-            indicies = np.where(num_of_classes == object_number)
-            for index in indicies:
-                element = knn_predictions[int(index)][0]
-                print(knn_predictions[int(index)][0])
-            print("\n")
 
+        """
+        [1. 2. 3. 4. 4. 4. 4.]
         
+        [[('Search', 0.0013596399), ('Wifi', 0.011406368)],
+        [('Search', 0.0024528338), ('Wifi', 0.2543233)],
+        [('Search', 0.000667821), ('Wifi', 0.009334985)],
+        [('Cross', 0.06497954), ('Cross', 0.16788629)],
+        [('Search', 0.024563929), ('Wifi', 0.28067002)],
+        [('Cross', 0.16762382), ('Search', 0.18368521)],
+         [('Cross', 0.024254547), ('Cross', 0.12189286)]]
+        """
+
+        best_predictions = []
+        for object_number in np.unique(num_of_classes):
+            indicies = np.where(num_of_classes == object_number)[0]
+            min_dist = 1
+            top_pred = None
+            for index in indicies:
+                element = knn_predictions[int(index)]
+                name = element[0][0]
+                dist = element[0][1]
+                if dist < min_dist:
+                    top_pred = (name, dist)
+            best_predictions.append(top_pred)
+        results.append(best_predictions)
+
+        """
         num_of_classes = overlaps(results[0]['rois'])
         some_dict = {}
         for i, emb in enumerate(embedding):
