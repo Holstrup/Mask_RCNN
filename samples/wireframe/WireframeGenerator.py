@@ -95,10 +95,6 @@ def generate_data_2(NUM_IMAGES, ICONS_PER_IMAGE):
         file_content = file_content[0:-1] + "}"
         write_string_to_json(file_content, type)
 
-
-generate_data_2(10, 2)
-
-
 def generate_data(NUM_IMAGES, ICONS_PER_IMAGE):
     """
     Generates wireframes by inserting icons into backgrounds, and writing a "regions data" file
