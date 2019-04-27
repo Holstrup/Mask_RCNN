@@ -81,7 +81,10 @@ def generate_data_2(NUM_IMAGES, ICONS_PER_IMAGE):
             background = Image.open(BACKGROUND_DIR + "/" + BACKGROUNDS[random.randint(0, len(BACKGROUNDS) - 1)]).convert("L")
             for i in range(NUM_ICONS):
                 cur_icon = ICONS[random.randint(0, len(ICONS) - 1)]
-                exact_file = random.choice(os.listdir('Icons/' + cur_icon + "/"))
+                icons_in_dir = os.listdir('Icons/' + cur_icon + "/")
+                if ".DS_Store" in icons_in_dir:
+                    icons_in_dir.remove(".DS_Store")
+                exact_file = random.choice(icons_in_dir)
                 img = Image.open('Icons/' + cur_icon + "/" + exact_file, 'r').resize((ICON_W, ICON_H))
                 offset = random.randint(1, bg_w - ICON_W), random.randint(1, bg_h - ICON_H)
                 background.paste(img, offset, img)
