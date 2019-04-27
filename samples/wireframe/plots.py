@@ -11,15 +11,15 @@ def feature_maps(embeddings, labels):
     """
 
     _, N = np.shape(embeddings)
-    e_map = embeddings.reshape((32, 32, N))
+    e_map = embeddings.reshape((16, 16, int(N/2)))
     fig = plt.figure(figsize=(12, 12))
     columns = 2
-    rows = 2
+    rows = 1
     for i in range(1, columns * rows + 1):
         img = e_map[:, :, i - 1]
         fig.add_subplot(rows, columns, i)
         plt.imshow(img)
-        plt.gca().set_title(labels[i - 1].decode("utf-8"))
+        plt.gca().set_title(labels[i - 1])
         plt.colorbar()
     plt.show()
 
