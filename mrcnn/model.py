@@ -2570,9 +2570,7 @@ class MaskRCNN():
         :return:
         """
         from keras.utils.data_utils import get_file
-        TF_WEIGHTS_PATH_NO_TOP = \
-            keras.utils.data_utils.get_file\
-                ('https://github.com/Holstrup/Mask_RCNN/releases/download/v2.2/' + filename)
+        TF_WEIGHTS_PATH_NO_TOP = ('https://github.com/Holstrup/Mask_RCNN/releases/download/v2.2/' + filename)
         weights_path = get_file(filename,
                                 TF_WEIGHTS_PATH_NO_TOP,
                                 cache_subdir='models',
