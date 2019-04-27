@@ -11,7 +11,7 @@ def feature_maps(embeddings, labels):
     """
 
     _, N = np.shape(embeddings)
-    e_map = embeddings.reshape((32, 32, N))
+    e_map = embeddings.reshape((16, 16, N/2))
     fig = plt.figure(figsize=(12, 12))
     columns = 2
     rows = 2
