@@ -28,7 +28,7 @@ bg_w, bg_h = DIMENSIONS
 COLOR = (255, 255, 255, 255)
 
 # Icon Dimensions
-ICON_W = ICON_H = 100
+ICON_W = ICON_H = 40
 
 #Specify training data or validation data
 TYPES = ["/train", "/val"]
