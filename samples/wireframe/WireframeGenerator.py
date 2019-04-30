@@ -4,21 +4,16 @@ import random
 import cv2 as cv
 import json
 import numpy as np
+import h5py
 
-
-BACKGROUND_DIR = os.getcwd() + "/Backgrounds"
-ICONS = os.listdir(os.getcwd() + "/Icons")
-BACKGROUNDS = os.listdir(BACKGROUND_DIR)
-
-# Remove annoying Mac files
-if ".DS_Store" in ICONS:
-    ICONS.remove(".DS_Store")
-if ".DS_Store" in BACKGROUNDS:
-    BACKGROUNDS.remove(".DS_Store")
 
 # Define Dirs
 MASK_DIR = os.path.abspath(os.path.join(os.getcwd(), "../../"))
 DATA_DIR = os.path.abspath(os.path.join(MASK_DIR, "datasets/wireframe"))
+
+BACKGROUND_DIR = os.getcwd() + "/Backgrounds"
+ICONS = os.listdir(os.getcwd() + "/Icons")
+BACKGROUNDS = os.listdir(BACKGROUND_DIR)
 
 # Wire-frame dimensions (iPhone 8)
 WIDTH = 900
@@ -34,38 +29,6 @@ ICON_W = ICON_H = 40
 TYPES = ["/train", "/val"]
 
 
-file_content = "{"
-
-
-def write_string_to_json(string, type):
-    """
-    :param string: Content to write to file
-    :param type: Train or validation dir
-    """
-    with open(DATA_DIR + type + '/via_region_data.json', 'w+') as f:
-        f.write(string)
-
-
-def add_box_json_polygon(filename, size, icons):
-    """
-    Helper function for the generate data function
-
-    :param filename: Filename or image file
-    :param size: Size of the image
-    :param icons: List of icons in image
-    :return:
-    """
-    s = " '{}{}':{{ 'filename': '{}', 'size': {}, 'regions': [".format(filename, size, filename, size)
-    for icon in icons:
-        x1, x2 = (icon[1], icon[1] + ICON_W)
-        y1, y2 = (icon[2], icon[2] + ICON_H)
-        s += "{{'shape_attributes': {{'name': 'polygon', " \
-             "'all_points_x': [{},{},{},{}], 'all_points_y': [{},{},{},{}] }}," \
-             "'region_attributes': {{'name': '{}'}} }} ,".format(x1, x1, x2, x2, y2, y1, y1, y2, icon[0])
-    s = s[0:-1] + "]" + " },"
-    s = s.replace("'", '"')
-    return s
-
 def get_mask(FILENAME):
     img = cv.imread(FILENAME, 0)
     _, th1 = cv.threshold(img,100,1,cv.THRESH_BINARY_INV)
@@ -77,8 +40,10 @@ def remove_ds_file(dir_list):
     return dir_list
 
 
+# Remove annoying Mac files
+remove_ds_file(ICONS)
+remove_ds_file(BACKGROUNDS)
 
-import h5py
 
 def Save_image_infos(all_masks, all_class_names, type, NUM_IMAGES, ICONS_PER_IMAGE):
     data_to_write = np.random.random(size=(NUM_IMAGES, ICONS_PER_IMAGE, HEIGHT, WIDTH))
@@ -100,6 +65,7 @@ def white_to_transparency(img):
     image_array[image_array < INFLECTION_POINT] = 0
     image_array[:, :, 3] = (255 * (image_array[:, :, :3] != 255).any(axis=2)).astype(np.uint8)
     return Image.fromarray(image_array)
+
 
 def generate_data_3(NUM_IMAGES, ICONS_PER_IMAGE):
     """
@@ -171,72 +137,3 @@ def generate_data_3(NUM_IMAGES, ICONS_PER_IMAGE):
 
 
         Save_image_infos(all_masks, all_class_names, type, NUM_IMAGES, ICONS_PER_IMAGE)
-
-
-def generate_data_2(NUM_IMAGES, ICONS_PER_IMAGE):
-    """
-    Generates wireframes by inserting icons into backgrounds, and writing a "regions data" file
-    that lets Mask R-CNN know where the BBoxes are on the image
-
-    :param NUM_IMAGES: Number of images you want to generate
-    :param ICONS_PER_IMAGE: MAX icons per image
-    """
-    global file_content
-    for type in TYPES:
-        file_content = "{"
-        if type == "/val":
-            NUM_IMAGES = int(NUM_IMAGES / 5)
-        for j in range(NUM_IMAGES):
-            icon_list = []
-            NUM_ICONS = random.randint(1, ICONS_PER_IMAGE)
-            background = Image.open(BACKGROUND_DIR + "/" + BACKGROUNDS[random.randint(0, len(BACKGROUNDS) - 1)]).convert("L")
-            for i in range(NUM_ICONS):
-                cur_icon = ICONS[random.randint(0, len(ICONS) - 1)]
-                icons_in_dir = os.listdir('Icons/' + cur_icon + "/")
-                if ".DS_Store" in icons_in_dir:
-                    icons_in_dir.remove(".DS_Store")
-                exact_file = random.choice(icons_in_dir)
-                img = Image.open('Icons/' + cur_icon + "/" + exact_file, 'r').resize((ICON_W, ICON_H))
-                offset = random.randint(1, bg_w - ICON_W), random.randint(1, bg_h - ICON_H)
-                background.paste(img, offset, img)
-                icon_list.append((cur_icon, offset[0], offset[1]))
-            img_dir_name = DATA_DIR + type + '/' + str(j) + ".png"
-            background.save(img_dir_name)
-            filename = str(j) + ".png"
-            img_size = os.stat(img_dir_name).st_size
-            file_content += add_box_json_polygon(filename, img_size, icon_list)
-
-        file_content = file_content[0:-1] + "}"
-        write_string_to_json(file_content, type)
-
-def generate_data(NUM_IMAGES, ICONS_PER_IMAGE):
-    """
-    Generates wireframes by inserting icons into backgrounds, and writing a "regions data" file
-    that lets Mask R-CNN know where the BBoxes are on the image
-
-    :param NUM_IMAGES: Number of images you want to generate
-    :param ICONS_PER_IMAGE: MAX icons per image
-    """
-    global file_content
-    for type in TYPES:
-        file_content = "{"
-        if type == "/val":
-            NUM_IMAGES = int(NUM_IMAGES / 5)
-        for j in range(NUM_IMAGES):
-            icon_list = []
-            NUM_ICONS = random.randint(1, ICONS_PER_IMAGE)
-            background = Image.open(BACKGROUND_DIR + "/" + BACKGROUNDS[random.randint(0, len(BACKGROUNDS) - 1)]).convert("L")
-            for i in range(NUM_ICONS):
-                cur_icon = ICONS[random.randint(0, len(ICONS) - 1)]
-                img = Image.open('Icons/' + cur_icon, 'r').resize((ICON_W, ICON_H))
-                offset = random.randint(1, bg_w - ICON_W), random.randint(1, bg_h - ICON_H)
-                background.paste(img, offset, img)
-                icon_list.append((cur_icon[0:-4], offset[0], offset[1]))
-            img_dir_name = DATA_DIR + type + '/' + str(j) + ".png"
-            background.save(img_dir_name)
-            filename = str(j) + ".png"
-            img_size = os.stat(img_dir_name).st_size
-            file_content += add_box_json_polygon(filename, img_size, icon_list)
-
-        file_content = file_content[0:-1] + "}"
-        write_string_to_json(file_content, type)
