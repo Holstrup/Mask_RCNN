@@ -366,6 +366,7 @@ class PyramidROIAlign(KE.Layer):
         super(PyramidROIAlign, self).__init__(**kwargs)
         self.pool_shape = tuple(pool_shape)
 
+
     def call(self, inputs):
         # Crop boxes [batch, num_boxes, (y1, x1, y2, x2)] in normalized coords
         boxes = inputs[0]
@@ -1277,6 +1278,7 @@ def load_image_gt(dataset, config, image_id, augment=False, augmentation=None,
     # Note that some boxes might be all zeros if the corresponding mask got cropped out.
     # and here is to filter them out
     _idx = np.sum(mask, axis=(0, 1)) > 0
+    print(_idx)
     mask = mask[:, :, _idx]
     class_ids = class_ids[_idx]
     # Bounding boxes. Note that some boxes might be all zeros
