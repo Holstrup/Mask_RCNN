@@ -4,6 +4,7 @@ import json
 import datetime
 import numpy as np
 import skimage.draw
+import h5py
 from matplotlib import pyplot as plt
 # Root directory of the project
 ROOT_DIR = os.path.abspath("../../")
@@ -81,7 +82,7 @@ class WireframeDataset(utils.Dataset):
             image_path = os.path.join(dataset_dir, image_name)
             image = skimage.io.imread(image_path)
             height, width = image.shape[:2]
-            mask_path = dataset_dir + "/masks.npy"
+            mask_path = dataset_dir + "/masks.h5"
             class_path = dataset_dir + "/classes.txt"
 
             self.add_image(
@@ -121,7 +122,10 @@ class WireframeDataset(utils.Dataset):
             f.close()
 
         # Load mask file
-        mask = np.load(mask_file_path)[image_id, :, :, :]
+        with h5py.File(mask_file_path, 'r') as hf:
+            mask = hf['data'][image_id, :, :, :]
+
+
         mask = np.swapaxes(mask, 0, 2)
         mask = np.swapaxes(mask, 0, 1)
 
@@ -136,9 +140,12 @@ class WireframeDataset(utils.Dataset):
             class_ids[i] = int(icon[0]["id"])
 
         mask = mask[:, :, 0:len(class_ids)]
+
+
         class_ids = class_ids.astype(int)
         # Return mask, and array of class IDs of each instance. Since we have
         # one class ID only, we return an array of 1s
+        print(np.shape(mask))
         return mask.astype(np.bool), class_ids
 
 

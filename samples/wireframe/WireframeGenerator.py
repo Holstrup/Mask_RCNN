@@ -76,8 +76,16 @@ def remove_ds_file(dir_list):
         dir_list.remove(".DS_Store")
     return dir_list
 
-def Save_image_infos(all_masks, all_class_names, type):
-    np.save(DATA_DIR + type + "/" + "masks", all_masks)
+
+
+import h5py
+
+def Save_image_infos(all_masks, all_class_names, type, NUM_IMAGES, ICONS_PER_IMAGE):
+    data_to_write = np.random.random(size=(NUM_IMAGES, ICONS_PER_IMAGE, HEIGHT, WIDTH))
+
+    with h5py.File(DATA_DIR + type + "/" + 'masks.h5', 'w') as hf:
+        hf.create_dataset("data", data=all_masks)
+
     with open(DATA_DIR + type + "/" + "classes.txt", 'w') as f:
         for item in all_class_names:
             f.write("%s\n" % item)
@@ -97,7 +105,6 @@ def generate_data_3(NUM_IMAGES, ICONS_PER_IMAGE):
     """
     Generates wireframes by inserting icons into backgrounds, and writing a "regions data" file
     that lets Mask R-CNN know where the BBoxes are on the image
-
     :param NUM_IMAGES: Number of images you want to generate
     :param ICONS_PER_IMAGE: MAX icons per image
     """
@@ -105,8 +112,8 @@ def generate_data_3(NUM_IMAGES, ICONS_PER_IMAGE):
         if type == "/val":
             NUM_IMAGES = int(NUM_IMAGES / 5)
 
-        all_masks = np.zeros((NUM_IMAGES, ICONS_PER_IMAGE, HEIGHT, WIDTH))
-        #all_masks = np.zeros((NUM_IMAGES, ICONS_PER_IMAGE, WIDTH, HEIGHT))
+        all_masks = np.zeros((NUM_IMAGES, ICONS_PER_IMAGE, HEIGHT, WIDTH), dtype=np.bool)
+
         all_class_names = []
         for j in range(NUM_IMAGES):
             NUM_ICONS = random.randint(1, ICONS_PER_IMAGE) # Choose no. of icons in exact image
@@ -116,7 +123,7 @@ def generate_data_3(NUM_IMAGES, ICONS_PER_IMAGE):
 
             #Define total image mask - Just zeros
             image_mask = np.zeros((ICONS_PER_IMAGE, HEIGHT, WIDTH))
-            #image_mask = np.zeros((ICONS_PER_IMAGE, WIDTH, HEIGHT))
+
 
             #Class names - Tells us what icons are on the image
             class_names = []
@@ -162,7 +169,8 @@ def generate_data_3(NUM_IMAGES, ICONS_PER_IMAGE):
 
             all_class_names.append(class_names)
 
-        Save_image_infos(all_masks, all_class_names, type)
+
+        Save_image_infos(all_masks, all_class_names, type, NUM_IMAGES, ICONS_PER_IMAGE)
 
 
 def generate_data_2(NUM_IMAGES, ICONS_PER_IMAGE):
