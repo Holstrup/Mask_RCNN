@@ -42,7 +42,7 @@ class WireframeConfig(Config):
     IMAGES_PER_GPU = 2
 
     # Number of classes (including background)
-    NUM_CLASSES = 1 + 1 #5  # Background + objects
+    NUM_CLASSES = 1 + 10  # Background + objects
 
     # Number of training steps per epoch
     STEPS_PER_EPOCH = 100
