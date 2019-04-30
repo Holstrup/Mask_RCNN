@@ -145,11 +145,8 @@ def generate_data_3(NUM_IMAGES, ICONS_PER_IMAGE):
                 # Retrieve the mask of the icon file
                 mask = get_mask('Icons/' + cur_icon + "/" + exact_file)
 
-
                 # Insert mask into the same place as the icon was placed - in the image_mask variable
                 image_mask[i, offset[1]:offset[1] + ICON_H, offset[0]: offset[0] + ICON_W] = mask
-
-                img = Image.fromarray(255 * image_mask[0, :, :])
 
 
                 # Add icon label to class names
