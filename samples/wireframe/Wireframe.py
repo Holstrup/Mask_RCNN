@@ -51,10 +51,10 @@ class WireframeConfig(Config):
     NUM_CLASSES = 1 + 10  # Background + objects
 
     # Number of training steps per epoch
-    STEPS_PER_EPOCH = 100
+    STEPS_PER_EPOCH = 200
 
-    # Skip detections with < 90% confidence
-    DETECTION_MIN_CONFIDENCE = 0.9
+    # Skip detections with < 70% confidence
+    DETECTION_MIN_CONFIDENCE = 0.7
 
 
 
@@ -135,9 +135,17 @@ class WireframeDataset(utils.Dataset):
         icons = os.listdir(icon_dir)
         if ".DS_Store" in icons:
             icons.remove(".DS_Store")
-        for i, icon in enumerate(icons):
-            icon_name = icon.split(".")[0]
-            self.add_class("wireframe", i + 1, icon_name)
+
+        self.add_class("wireframe", 1, "Wifi")
+        self.add_class("wireframe", 2, "More")
+        self.add_class("wireframe", 3, "D")
+        self.add_class("wireframe", 4, "R")
+        self.add_class("wireframe", 5, "U")
+        self.add_class("wireframe", 6, "A")
+        self.add_class("wireframe", 7, "Done")
+        self.add_class("wireframe", 8, "I")
+        self.add_class("wireframe", 9, "Z")
+        self.add_class("wireframe", 10, "Menu")
 
         # Train or validation dataset?
         assert subset in ["train", "val"]
