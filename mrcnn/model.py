@@ -716,14 +716,15 @@ def refine_detections_graph(rois, probs, deltas, window, embeddings, config):
 
     # Filter out background boxes
     keep = tf.where(class_ids > 0)[:, 0]
-    """
+
+    # TODO: THIS WAS FILTERED OUT BEFORE. CHECKING IF RESULTS ARE BETTER
     # Filter out low confidence boxes
     if config.DETECTION_MIN_CONFIDENCE:
         conf_keep = tf.where(class_scores >= config.DETECTION_MIN_CONFIDENCE)[:, 0]
         keep = tf.sets.set_intersection(tf.expand_dims(keep, 0),
                                         tf.expand_dims(conf_keep, 0))
         keep = tf.sparse_tensor_to_dense(keep)[0]
-    """
+
     # Apply per-class NMS
     # 1. Prepare variables
     pre_nms_class_ids = tf.gather(class_ids, keep)
