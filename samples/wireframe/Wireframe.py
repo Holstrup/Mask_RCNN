@@ -48,7 +48,7 @@ class WireframeConfig(Config):
     IMAGES_PER_GPU = 2
 
     # Number of classes (including background)
-    NUM_CLASSES = 1 + 10  # Background + objects
+    NUM_CLASSES = 1 + 15  # Background + objects
 
     # Number of training steps per epoch
     STEPS_PER_EPOCH = 200
@@ -136,16 +136,22 @@ class WireframeDataset(utils.Dataset):
         if ".DS_Store" in icons:
             icons.remove(".DS_Store")
 
-        self.add_class("wireframe", 1, "Wifi")
-        self.add_class("wireframe", 2, "More")
+        self.add_class("wireframe", 1, "A")
+        self.add_class("wireframe", 2, "Cross")
         self.add_class("wireframe", 3, "D")
-        self.add_class("wireframe", 4, "R")
-        self.add_class("wireframe", 5, "U")
-        self.add_class("wireframe", 6, "A")
-        self.add_class("wireframe", 7, "Done")
+        self.add_class("wireframe", 4, "Done")
+        self.add_class("wireframe", 5, "H")
+        self.add_class("wireframe", 6, "Heart")
+        self.add_class("wireframe", 7, "Home")
         self.add_class("wireframe", 8, "I")
-        self.add_class("wireframe", 9, "Z")
-        self.add_class("wireframe", 10, "Menu")
+        self.add_class("wireframe", 9, "Menu")
+        self.add_class("wireframe", 10, "More")
+        self.add_class("wireframe", 11, "R")
+        self.add_class("wireframe", 12, "Search")
+        self.add_class("wireframe", 13, "U")
+        self.add_class("wireframe", 14, "Wifi")
+        self.add_class("wireframe", 15, "Z")
+
 
         # Train or validation dataset?
         assert subset in ["train", "val"]
