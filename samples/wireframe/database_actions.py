@@ -19,7 +19,7 @@ def convert_array(text):
 
 def reinitialize_table(database):
     """
-    Creates Table in database.db file and drops it if it exists already
+    Creates Table in Database_Res50.db file and drops it if it exists already
     """
     sqlite3.register_adapter(np.ndarray, adapt_array)
     sqlite3.register_converter("array", convert_array)
