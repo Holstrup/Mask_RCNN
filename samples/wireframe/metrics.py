@@ -4,7 +4,7 @@ import pandas as pd
 import sklearn
 from samples.wireframe.database_actions import get_known_encodings
 
-embeddings, labels = get_known_encodings("Database.db", 128)
+embeddings, labels = get_known_encodings("Database_Res50.db", 128)
 
 def metricFunction(embeddings, labels, n_clusters):
     algorithms = []

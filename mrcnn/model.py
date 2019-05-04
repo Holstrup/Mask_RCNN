@@ -2592,7 +2592,7 @@ class MaskRCNN():
         assert np.size(np.unique(num_of_classes)) == 1, "More than one icon in this image"
         N_Boxes, _ = np.shape(embedding)
         for i in range(N_Boxes):
-            dbactions.add_encoding('Database.db', embedding[i, :], anchor_label)
+            dbactions.add_encoding('Database_Res50.db', embedding[i, :], anchor_label)
 
     def OneShotDetect(self, images, triplet_model, k):
         """
@@ -2604,7 +2604,7 @@ class MaskRCNN():
         results = self.detect([images])
         embedding = results[1]
         embedding = triplet_model.predict(embedding[0, :, :])
-        matrix_embeddings, labels = get_known_encodings("Database.db", 128)
+        matrix_embeddings, labels = get_known_encodings("Database_Res50.db", 128)
         knn_predictions = []
         for emb in embedding:
             knn_predictions.append(knn(emb, matrix_embeddings, labels, k))
