@@ -77,8 +77,9 @@ class WireframeDataset(utils.Dataset):
         self.DATA_DIR = os.path.abspath(os.path.join(self.MASK_DIR, "datasets/wireframe"))
 
         self.BACKGROUND_DIR = os.getcwd() + "/Backgrounds"
-        self.ICONS = os.listdir(os.getcwd() + "/Icons")
-        self.BACKGROUNDS = os.listdir(self.BACKGROUND_DIR)
+        self.ICONS = self.remove_ds_file(os.listdir(os.getcwd() + "/Icons"))
+        self.BACKGROUNDS = self.remove_ds_file(os.listdir(self.BACKGROUND_DIR))
+
 
         # Wire-frame dimensions (iPhone 8)
         self.WIDTH = 900
@@ -104,6 +105,8 @@ class WireframeDataset(utils.Dataset):
     def remove_ds_file(self, dir_list):
         if ".DS_Store" in dir_list:
             dir_list.remove(".DS_Store")
+        elif "_DS_Store" in dir_list:
+            dir_list.remove("_DS_Store")
         return dir_list
 
     def Save_image_infos(self, all_class_names, type):
@@ -194,6 +197,7 @@ class WireframeDataset(utils.Dataset):
 
                 # Pick background image
                 background = Image.open(
+
                     self.BACKGROUND_DIR + "/" + self.BACKGROUNDS[random.randint(0,
                                                                                 len(self.BACKGROUNDS) - 1)]).convert("L")
 
@@ -226,6 +230,9 @@ class WireframeDataset(utils.Dataset):
 
                     # Retrieve the mask of the icon file
                     mask = self.get_mask('Icons/' + cur_icon + "/" + exact_file)
+
+                    #icon_image = Image.fromarray(255 * mask)
+                    #icon_image.show()
 
                     # Insert mask into the same place as the icon was placed - in the image_mask variable
                     image_mask[i, offset[1]:offset[1] + self.ICON_H, offset[0]: offset[0] + self.ICON_W] = mask

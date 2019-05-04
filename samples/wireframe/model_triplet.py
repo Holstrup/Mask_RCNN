@@ -30,7 +30,7 @@ class Model:
     def triplet_loss(self, y_true, y_pred):
         # Reshape data
         y_true = tf.reshape(y_true, [-1])
-        def_margin = tf.constant(1.0, dtype=tf.float32)
+        def_margin = tf.constant(0.3, dtype=tf.float32)
 
         # Run
         loss, _ = batch_all_triplet_loss(embeddings=y_pred, labels=y_true, margin=def_margin)
@@ -47,23 +47,29 @@ class LossHistory(keras.callbacks.Callback):
         self.trainlosses.append(logs.get('loss'))
         self.vallosses.append(logs.get('val_loss'))
 
-# # database = ROOT_DIR + '/samples/wireframe/Database_emb_labels.db'
-# import os
-# os.chdir('/Users/BotezatuCristian/PycharmProjects/Mask_RCNN/samples/wireframe/')
-# embeddings, labels = get_known_encodings('Database_emb_labels.db', 1024)
-# print(embeddings)
-#
-# #Train the model
-# history = LossHistory()
-# model = Model()
-# model.model.fit(embeddings.T, labels, batch_size=10, epochs=100, callbacks=[history], validation_split = 0.25)
-#
-# #Plot the training loss
-# line1 = plt.plot(history.trainlosses, 'r--', label = "Training loss")
-# plt.plot(history.vallosses, 'b--', label = "Validation loss")
-# plt.legend()
-# plt.show()
-#
-# #Save the weights
+"""
+stop_early = keras.callbacks.EarlyStopping(monitor='val_loss', min_delta=0, patience=8,
+                                           verbose=0, mode='auto', baseline=None, restore_best_weights=True)
+
+embeddings, labels = get_known_encodings('Database.db', 1024)
+print(embeddings)
+
+#Train the model
+history = LossHistory()
+model = Model()
+model.model.fit(embeddings.T, labels, batch_size=50, epochs=1000, callbacks=[history, stop_early], validation_split=0.25
+                , verbose=2)
+
+
+
+#Plot the training loss
+line1 = plt.plot(history.trainlosses, 'r--', label = "Training loss")
+plt.plot(history.vallosses, 'b--', label = "Validation loss")
+plt.legend()
+plt.show()
+
+
+#Save the weights
 # model_path = os.path.join('/Users/BotezatuCristian/PycharmProjects/Mask_RCNN/', "weights_emb_labels.h5")
-# model.model.save_weights(model_path)
+model.model.save_weights("Triplet_Res101_03.h5")
+"""
