@@ -15,7 +15,6 @@ class Model:
     def __init__(self):
         self.model = self.build_model()
         self.compile_model()
-        self.margin = 0.3
 
     def build_model(self):
         base = KL.Input(shape=(1024,))
@@ -31,7 +30,7 @@ class Model:
     def triplet_loss(self, y_true, y_pred):
         # Reshape data
         y_true = tf.reshape(y_true, [-1])
-        def_margin = tf.constant(self.margin, dtype=tf.float32)
+        def_margin = tf.constant(0.3, dtype=tf.float32)
 
         # Run
         loss, _ = batch_all_triplet_loss(embeddings=y_pred, labels=y_true, margin=def_margin)
