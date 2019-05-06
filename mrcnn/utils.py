@@ -678,7 +678,8 @@ def compute_matches(gt_boxes, gt_class_ids, gt_masks,
     pred_masks = pred_masks[..., indices]
 
     # Compute IoU overlaps [pred_masks, gt_masks]
-    overlaps = compute_overlaps_masks(pred_masks, gt_masks)
+    #overlaps = compute_overlaps_masks(pred_masks, gt_masks)
+    overlaps = compute_overlaps(pred_boxes, gt_boxes)
 
     # Loop through predictions and find matching ground truth boxes
     match_count = 0
